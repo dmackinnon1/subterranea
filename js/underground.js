@@ -144,6 +144,7 @@ function other(day){
 }
 
 function selectDay(event) {
+	if (display.disabled == true) return;
 	let id = event.currentTarget.id;
 	console.log(id)
 	let val = id.substring(0,id.indexOf("_"));
