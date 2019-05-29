@@ -190,7 +190,7 @@ def longInWords(options):
     s = "It could be that ";
     s+= inWords(options[0])
     for i in range(len(options)-1):
-        s+=' or, '
+        s+=', or '
         s+= inWords(options[i+1])
     return s
 
@@ -254,7 +254,7 @@ for s1 in person1Statements:
             p['person1_type']= solution[0][1]
             p['person2_type']= solution[0][2]
             p['person1_explain'] = explain(1,s1)
-            p['person2_explain'] = explain(2,s1)
+            p['person2_explain'] = explain(2,s2)
             p['solution_explain'] = stateSolution(solution[0],truthValue(1, solution[0]),truthValue(2, solution[0]))
             puzzles.append(p)            
 print('We generated ' + str(solutionCount) + " puzzles.")
