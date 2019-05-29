@@ -75,7 +75,7 @@ def intersection(set1,set2):
             intersect.append(s)
     return intersect
 
-# functions that help extract sets from goal set
+# statement generators
 def dayAlone(day):
     statements = []
     for i in time:
@@ -84,7 +84,7 @@ def dayAlone(day):
     return statements
  
 def dayAloneStatement(day):
-    return "It is " + day + "."
+    return "It is " + day 
 
 def selfAlone(person, self):
     a = ['blank','blank','blank']
@@ -106,10 +106,10 @@ def selfAlone(person, self):
     return [a,b,c,d]
     
 def selfAloneStatement(day):
-    return "I am a " + day + "-knight."
+    return "I am a " + day + "-knight"
 
 def otherAloneStatement(day):
-    return "The other person is a " + day + "-knight."
+    return "The other person is a " + day + "-knight"
 
 #the person is making a statement about themselves and the day
 def selfAndDay(person, self, day):
@@ -124,10 +124,10 @@ def selfAndDay(person, self, day):
     return [a,b]
 
 def selfAndDayStatement(self, day):
-    return "I am a " + self + "-knight, and it is " + day + "."
+    return "I am a " + self + "-knight, and it is " + day 
 
 def oppositeDayStatement(day):
-    return "It is not " + opposite(day) +"."
+    return "It is not " + opposite(day) 
 
 
 # the person is making a statement about the other and the day 
@@ -143,7 +143,7 @@ def otherAndDay(person, other, day):
     return [a,b]
 
 def otherAndDayStatement(other, day):
-    return "The other persion is a " + other + "-knight, and it is " + day + "."
+    return "The other person is a " + other + "-knight, and it is " + day 
 
 # the person is making a statement themselves and the other 
 def otherAndSelf(person, self, other):
@@ -158,7 +158,7 @@ def otherAndSelf(person, self, other):
     return [a,b]
 
 def otherAndSelfStatement(other, self):
-    return "I am a " + self + "-knight, and the other persion is a " + other + "-knight."
+    return "I am a " + self + "-knight, and the other person is a " + other + "-knight"
 
 # combine all statements
 person1Statements = []
@@ -180,20 +180,59 @@ for d in time:
         person1Statements.append({'statement': oppositeDayStatement(d), 'state': dayAlone(d)})
         person2Statements.append({'statement': oppositeDayStatement(d), 'state': dayAlone(d)})
 
-# puzzle json
-def jsonForPuzzle(puzzle):
-    json = '{"bro0": "' + puzzle['bro0_text'] + '", ' 
-    json += ' "bro1": "' + puzzle['bro1_text'] + '", '  
-    json += ' "bro0_name": "' + puzzle['solution'][0][0] + '", '  
-    json += ' "bro1_name": "' + puzzle['solution'][1][0] + '", '  
-    json += ' "bro0_card": "' + puzzle['solution'][0][1] + '", '  
-    json += ' "bro1_card": "' + puzzle['solution'][1][1] + '", '     
-    json += ' "solution": "' + str(puzzle['solution']) + '", '
-    json += ' "explanation": "' + puzzle['explanation'] + '", '  
-    json += ' "id": "' + str(puzzle['id']) + '"}' + '\n'
-    return json
+# functions for generating and formatting the explanations
+def inWords(option):
+    s = "it is " + option[0] +", and the first person is a " + option[1] +"-knight" 
+    s += " while the second person is a " + option[2] + "-knight"
+    return s
 
-# generate puzzles
+def longInWords(options):
+    s = "It could be that ";
+    s+= inWords(options[0])
+    for i in range(len(options)-1):
+        s+=' or, '
+        s+= inWords(options[i+1])
+    return s
+
+def explain(i, st):
+    position = 'first'
+    if (i == 2):
+        position = 'second'
+    s = "When the " + position + " inhabitant says '" + st['statement'] +"'"   
+    truthCount = len(inhabitantTruths(i, st['state']))
+    if truthCount == 0 :
+        s += ", they cannot be telling the truth. "
+    elif truthCount == 1 :
+        s += ", if they are telling the truth, there is one possibility: " + inWords(inhabitantTruths(i, st['state'])[0]) + ". "
+    else :
+        s += ", if they are telling the truth, there are " + str(truthCount) + " possibilities: "  
+        s += longInWords(inhabitantTruths(i, st['state']))
+        s += "."
+    lieCount = len(inhabitantLies(i, fullComplement(st['state'])))
+    if lieCount == 0 :
+        s += "By making this statement, they cannot be lying. "
+    elif lieCount == 1 :
+        s += "There is only one way the could be lying: " + inWords(inhabitantLies(i, fullComplement(st['state']))[0]) + ". "
+    else :
+        s+= "There are " +str(lieCount) + " ways they could be lying: "
+        s+= longInWords(inhabitantLies(i, fullComplement(st['state'])))
+        s+= "."
+    return s
+
+def stateSolution(sol, p1, p2):
+    s = "There is only one possibility from both statements: the first person is "
+    if p1 :
+        s += 'telling the truth'
+    else:
+        s += 'lying'
+    s += " and the second person is "
+    if p2 :
+        s += 'telling the truth. '
+    else:
+        s += 'lying. '
+    s += "It must be that " + inWords(sol) +"."
+    return s
+
 
 solutionCount = 0
 puzzles = []
@@ -214,17 +253,22 @@ for s1 in person1Statements:
             p['id'] = solutionCount
             p['person1_type']= solution[0][1]
             p['person2_type']= solution[0][2]
-            puzzles.append(p)
+            p['person1_explain'] = explain(1,s1)
+            p['person2_explain'] = explain(2,s1)
+            p['solution_explain'] = stateSolution(solution[0],truthValue(1, solution[0]),truthValue(2, solution[0]))
+            puzzles.append(p)            
 print('We generated ' + str(solutionCount) + " puzzles.")
 
-
-#json output
+# json output
 def jsonForPuzzle(p):
     json = '{"time":"' + p['time'] + '",' 
     json += '"person1":"' + p['person1'] + '",'
     json += '"person2":"' + p['person2'] + '",'
     json += '"person1_type":"' + p['person1_type'] + '",'
     json += '"person2_type":"' + p['person2_type'] + '",'
+    json += '"person1_explain":"' + p['person1_explain'] + '",'
+    json += '"person2_explain":"' + p['person2_explain'] + '",'
+    json += '"solution_explain":"' + p['solution_explain'] + '",'
     json += '"id":"' + str(p['id']) + '"'
     json += "}"
     return json
