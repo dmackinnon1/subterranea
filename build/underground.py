@@ -175,8 +175,8 @@ for p in time:
 for d in time:
         person1Statements.append({'statement': dayAloneStatement(d), 'state': dayAlone(d)})
         person2Statements.append({'statement': dayAloneStatement(d), 'state': dayAlone(d)})
-        person1Statements.append({'statement': selfAloneStatement(d), 'state': selfAlone(1,p)})
-        person2Statements.append({'statement': selfAloneStatement(d), 'state': selfAlone(2,p)})
+        person1Statements.append({'statement': selfAloneStatement(d), 'state': selfAlone(1,d)})
+        person2Statements.append({'statement': selfAloneStatement(d), 'state': selfAlone(2,d)})
         person1Statements.append({'statement': oppositeDayStatement(d), 'state': dayAlone(d)})
         person2Statements.append({'statement': oppositeDayStatement(d), 'state': dayAlone(d)})
 
