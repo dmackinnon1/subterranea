@@ -257,7 +257,6 @@ for s1 in person1Statements:
             p['person2_explain'] = explain(2,s2)
             p['solution_explain'] = stateSolution(solution[0],truthValue(1, solution[0]),truthValue(2, solution[0]))
             puzzles.append(p)            
-print('We generated ' + str(solutionCount) + " puzzles.")
 
 # json output
 def jsonForPuzzle(p):
