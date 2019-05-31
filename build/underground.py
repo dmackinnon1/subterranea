@@ -160,6 +160,38 @@ def otherAndSelf(person, self, other):
 def otherAndSelfStatement(other, self):
     return "I am a " + self + "-knight, and the other person is a " + other + "-knight"
 
+
+def atLeastOneDayKnight():
+    atLeast = options.copy()
+    atLeast.remove(['night','night','night'])
+    atLeast.remove(['day','night','night'])
+    return atLeast
+
+def atLeastOneDayKnightStatement():
+    return "At least one of us is a day-knight"
+
+def atLeastOneNightKnightStatement():
+    return "At least one of us is a night-knight"
+
+def bothDayKnightStatement():
+    return "We are both day-knights"
+
+def bothNightKnightStatement():
+    return "We are both night-knights"
+
+def atLeastOneNightKnight():
+    atLeast = options.copy()
+    atLeast.remove(['night','day','day'])
+    atLeast.remove(['day','day','day'])
+    return atLeast
+
+def bothNightKnight():
+    return [['night','night','night'],['day','night','night']]
+
+def bothDayKnight():
+    return [['night','day','day'],['day','day','day']]
+
+
 # combine all statements
 person1Statements = []
 person2Statements = []
@@ -179,6 +211,16 @@ for d in time:
         person2Statements.append({'statement': selfAloneStatement(d), 'state': selfAlone(2,d)})
         person1Statements.append({'statement': oppositeDayStatement(d), 'state': dayAlone(d)})
         person2Statements.append({'statement': oppositeDayStatement(d), 'state': dayAlone(d)})
+
+person1Statements.append({'statement': atLeastOneNightKnightStatement(), 'state': atLeastOneNightKnight()})
+person1Statements.append({'statement': atLeastOneDayKnightStatement(), 'state': atLeastOneDayKnight()})
+person1Statements.append({'statement': bothNightKnightStatement(), 'state': bothNightKnight()})
+person1Statements.append({'statement': bothDayKnightStatement(), 'state': bothDayKnight()})
+
+person2Statements.append({'statement': atLeastOneNightKnightStatement(), 'state': atLeastOneNightKnight()})
+person2Statements.append({'statement': atLeastOneDayKnightStatement(), 'state': atLeastOneDayKnight()})
+person2Statements.append({'statement': bothNightKnightStatement(), 'state': bothNightKnight()})
+person2Statements.append({'statement': bothDayKnightStatement(), 'state': bothDayKnight()})
 
 # functions for generating and formatting the explanations
 def inWords(option):
